@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es6",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
+    "declaration": true,
+    "declarationDir": "./lib"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "./index.tsx"
+  ]
+}
