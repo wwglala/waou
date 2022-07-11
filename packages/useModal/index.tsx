@@ -7,11 +7,19 @@ import React, {
   useMemo,
   useRef,
   useState,
-  memo,
   MutableRefObject,
+  createContext,
+  useContext,
 } from "react";
 import ReactDOM from "react-dom";
 
+let initCount = 0;
+const PROVIDER_SYMBOL = Symbol("ModalProvider_id");
+const Context = createContext<ContextType>({
+  modalContainer: { current: [] },
+  updateModal: (f) => {},
+  registerModal: (f) => {},
+});
 interface ModalConfig<T = any, V = any> {
   Dialog: T;
   Drawer: V;
@@ -32,7 +40,7 @@ interface OutPropsType<T> {
 type Dispatch<T> = (visible: boolean, outProps?: OutPropsType<T>) => void;
 type FirstParamType = ComponentType | ReactElement | FunctionComponent<any>;
 
-export interface ModalStore<T> {
+interface ModalStore<T> {
   id: Symbol;
   visible: boolean;
   Component: FirstParamType;
@@ -46,9 +54,6 @@ interface ComponentType {
   Component: ReactElement | FunctionComponent<any>;
 }
 
-let initCount = 0;
-const PROVIDER_SYMBOL = Symbol("ModalProvider_id");
-
 export function useModal<T>(
   Component: FirstParamType,
   modalProps?: T,
@@ -57,18 +62,21 @@ export function useModal<T>(
   const id = useMemo(() => Symbol("useModal_id"), []);
   const firstLoad = useRef(true);
 
-  const context: ContextType | null = useMemo(() => {
-    const fiber: any =
-      typeof Component === "function" ? <Component /> : Component;
-    let parent = fiber._owner;
-    while (parent) {
-      if (parent.type[PROVIDER_SYMBOL]) {
-        return parent.type.context;
-      }
-      parent = parent.return;
-    }
-    return null;
-  }, []);
+  // 生产环境中 fiber._owner 不适用
+  // const context: ContextType | null = useMemo(() => {
+  //   const fiber: any =
+  //     typeof Component === "function" ? <Component /> : Component;
+  //   let parent = fiber._owner;
+  //   while (parent) {
+  //     if (parent.type[PROVIDER_SYMBOL]) {
+  //       return parent.type.context;
+  //     }
+  //     parent = parent.return;
+  //   }
+  //   return null;
+  // }, []);
+
+  const context = useContext(Context);
 
   if (!context) {
     throw new Error(`useModal !
@@ -146,7 +154,17 @@ export function useModal<T>(
 
     const target = modalContainer.current.find((item) => item.id === id);
     const isShow = target?.visible;
-    if (!isShow) return;
+    if (!isShow) {
+      registerModal((store) => {
+        return store.map((item) => {
+          return {
+            ...item,
+            Component: item.id === id ? Component : item.Component,
+          };
+        });
+      });
+      return;
+    }
     updateModal((store) => {
       return store.map((item) => {
         return {
@@ -162,6 +180,7 @@ export function useModal<T>(
 
 function Portal<T>(props: ModalPortal<T>) {
   const { modalStore, modalRoot, config } = props;
+
   const getModal = (
     Component
   ): { Modal: React.ComponentClass<any, any>; Component: ReactElement } => {
@@ -253,12 +272,15 @@ export const ModalProvider: ModalProvider = (props: ModalProviderProps) => {
     };
   }, []);
 
+  const modalAction = useMemo(
+    () => ({ modalContainer, updateModal, registerModal }),
+    []
+  );
+
   return (
-    <>
+    <Context.Provider value={modalAction}>
       {children}
       <Portal config={config} modalStore={modalStore} modalRoot={modalRoot} />
-    </>
+    </Context.Provider>
   );
 };
-
-export const MemoModalProvider = memo(ModalProvider);

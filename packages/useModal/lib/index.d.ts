@@ -1,4 +1,4 @@
-import React, { ReactElement, FunctionComponent, MutableRefObject } from 'react';
+import { ReactElement, FunctionComponent, MutableRefObject } from 'react';
 
 interface ModalConfig<T = any, V = any> {
     Dialog: T;
@@ -39,6 +39,5 @@ interface ModalProvider {
     context?: ContextType;
 }
 declare const ModalProvider: ModalProvider;
-declare const MemoModalProvider: React.MemoExoticComponent<ModalProvider>;
 
-export { MemoModalProvider, ModalProvider, ModalStore, useModal };
+export { ModalProvider, useModal };

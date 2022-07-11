@@ -60,21 +60,29 @@ function __spreadArray(to, from, pack) {
 
 var initCount = 0;
 var PROVIDER_SYMBOL = Symbol("ModalProvider_id");
+var Context = React.createContext({
+    modalContainer: { current: [] },
+    updateModal: function (f) { },
+    registerModal: function (f) { }
+});
 function useModal(Component, modalProps, deps) {
     if (deps === void 0) { deps = []; }
     var id = React.useMemo(function () { return Symbol("useModal_id"); }, []);
     var firstLoad = React.useRef(true);
-    var context = React.useMemo(function () {
-        var fiber = typeof Component === "function" ? React__default["default"].createElement(Component, null) : Component;
-        var parent = fiber._owner;
-        while (parent) {
-            if (parent.type[PROVIDER_SYMBOL]) {
-                return parent.type.context;
-            }
-            parent = parent["return"];
-        }
-        return null;
-    }, []);
+    // 生产环境中 fiber._owner 不适用
+    // const context: ContextType | null = useMemo(() => {
+    //   const fiber: any =
+    //     typeof Component === "function" ? <Component /> : Component;
+    //   let parent = fiber._owner;
+    //   while (parent) {
+    //     if (parent.type[PROVIDER_SYMBOL]) {
+    //       return parent.type.context;
+    //     }
+    //     parent = parent.return;
+    //   }
+    //   return null;
+    // }, []);
+    var context = React.useContext(Context);
     if (!context) {
         throw new Error("useModal !\n\n    please abide by React.Context usage, use the ModalProvider to init!\n    like this: <ModalProvider>{children}</ModalProvider>\n  ");
     }
@@ -116,8 +124,14 @@ function useModal(Component, modalProps, deps) {
         }
         var target = modalContainer.current.find(function (item) { return item.id === id; });
         var isShow = target === null || target === void 0 ? void 0 : target.visible;
-        if (!isShow)
+        if (!isShow) {
+            registerModal(function (store) {
+                return store.map(function (item) {
+                    return __assign(__assign({}, item), { Component: item.id === id ? Component : item.Component });
+                });
+            });
             return;
+        }
         updateModal(function (store) {
             return store.map(function (item) {
                 return __assign(__assign({}, item), { Component: item.id === id ? Component : item.Component });
@@ -175,12 +189,11 @@ var ModalProvider = function (props) {
             (_a = modalRoot.current) === null || _a === void 0 ? void 0 : _a.remove();
         };
     }, []);
-    return (React__default["default"].createElement(React__default["default"].Fragment, null,
+    var modalAction = React.useMemo(function () { return ({ modalContainer: modalContainer, updateModal: updateModal, registerModal: registerModal }); }, []);
+    return (React__default["default"].createElement(Context.Provider, { value: modalAction },
         children,
         React__default["default"].createElement(Portal, { config: config, modalStore: modalStore, modalRoot: modalRoot })));
 };
-var MemoModalProvider = React.memo(ModalProvider);
 
-exports.MemoModalProvider = MemoModalProvider;
 exports.ModalProvider = ModalProvider;
 exports.useModal = useModal;
