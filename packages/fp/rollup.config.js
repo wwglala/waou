@@ -1,12 +1,18 @@
-import babel from "@rollup/plugin-babel";
-import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-typescript";
 import typescript from "@rollup/plugin-commonjs";
 import dts from "rollup-plugin-dts";
 
+const params = process.argv.slice(2);
+const env = params.reduce((pre, cur) => {
+  const [key, value = true] = cur.split("=");
+  pre[key] = value;
+  return pre;
+}, {});
+
+const input = env["--env"] === "dev" ? "./test/index.ts" : "./core/index.ts";
 export default [
   {
-    input: "./index.tsx",
+    input,
     output: [
       {
         file: "./lib/index.js",
@@ -17,18 +23,10 @@ export default [
         format: "es",
       },
     ],
-    external: ["react", "react-dom"],
-    plugins: [
-      typescript(),
-      resolve(),
-      commonjs(),
-      babel({
-        exclude: "node_modules/**",
-      }),
-    ],
+    plugins: [typescript(), commonjs()],
   },
   {
-    input: "./index.tsx",
+    input: "./core/index.ts",
     output: {
       file: "./index.d.ts",
     },
