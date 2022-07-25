@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "strict": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "esModuleInterop":true,
+    "moduleResolution":"Node"
   },
   "include": ["./core/*.ts"]
 }

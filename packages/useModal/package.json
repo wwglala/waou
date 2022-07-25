@@ -13,6 +13,9 @@
     "es/",
     "types/"
   ],
+  "repository": {
+    "url": "https://github.com/wwglala/waou/tree/master/packages/useModal"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
