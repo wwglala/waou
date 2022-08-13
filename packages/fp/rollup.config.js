@@ -38,11 +38,11 @@ export default [
   {
     input,
     output: [
-      // {
-      //   file: "./umd/index.js",
-      //   format: "umd",
-      //   name: "fp",
-      // },
+      {
+        file: "./umd/index.js",
+        format: "umd",
+        name: "fp",
+      },
       {
         dir: "es",
         format: "es",

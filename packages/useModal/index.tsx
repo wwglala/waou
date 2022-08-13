@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import React, {
   FunctionComponent,
   ReactElement,
@@ -61,21 +60,6 @@ export function useModal<T>(
 ): [Dispatch<T>] {
   const id = useMemo(() => Symbol("useModal_id"), []);
   const firstLoad = useRef(true);
-
-  // 生产环境中 fiber._owner 不适用
-  // const context: ContextType | null = useMemo(() => {
-  //   const fiber: any =
-  //     typeof Component === "function" ? <Component /> : Component;
-  //   let parent = fiber._owner;
-  //   while (parent) {
-  //     if (parent.type[PROVIDER_SYMBOL]) {
-  //       return parent.type.context;
-  //     }
-  //     parent = parent.return;
-  //   }
-  //   return null;
-  // }, []);
-
   const context = useContext(Context);
 
   if (!context) {
