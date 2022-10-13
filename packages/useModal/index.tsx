@@ -26,7 +26,7 @@ interface ModalConfig<T = any, V = any> {
 
 interface ModalPortal<T> {
   modalStore: Array<ModalStore<T>>;
-  modalRoot: React.RefObject<HTMLDivElement>;
+  modalRoot: HTMLDivElement;
   config: ModalConfig;
 }
 
@@ -60,6 +60,7 @@ export function useModal<T>(
 ): [Dispatch<T>] {
   const id = useMemo(() => Symbol("useModal_id"), []);
   const firstLoad = useRef(true);
+  const recordProps = useRef<OutPropsType<T>>({});
   const context = useContext(Context);
 
   if (!context) {
@@ -73,11 +74,15 @@ export function useModal<T>(
   const { modalContainer, registerModal, updateModal } = context;
 
   const dispatch = (visible: boolean, outProps?: OutPropsType<T>) => {
+    const currentRenderProps = outProps || recordProps.current;
+    recordProps.current = outProps;
+    console.log("=====");
+
     const {
       modalProps: dispatchModalProps,
       props,
       ...otherProps
-    } = outProps || {};
+    } = currentRenderProps || {};
 
     updateModal((store) => {
       return store.map((item) => {
@@ -203,7 +208,7 @@ function Portal<T>(props: ModalPortal<T>) {
         );
       })}
     </>,
-    modalRoot.current!
+    modalRoot
   );
 }
 
@@ -228,7 +233,11 @@ export const ModalProvider: ModalProvider = (props: ModalProviderProps) => {
   const [modalStore, setModalStore] = useState<Array<ModalStore<any>>>(
     modalContainer.current
   );
-  const modalRoot = useRef(document.createElement("div"));
+  const modalRoot = useMemo(() => {
+    const root = document.createElement("div");
+    root.style.display = "contents";
+    return root;
+  }, []);
 
   const updateModal = (f) => {
     modalContainer.current = f(modalContainer.current);
@@ -249,10 +258,10 @@ export const ModalProvider: ModalProvider = (props: ModalProviderProps) => {
   }, []);
 
   useEffect(() => {
-    modalRoot.current.id = `useModal_root_container${initCount++}`;
-    document.body.append(modalRoot.current);
+    modalRoot.id = `useModal_root_container${initCount++}`;
+    document.body.append(modalRoot);
     return () => {
-      modalRoot.current?.remove();
+      modalRoot.remove();
     };
   }, []);
 
