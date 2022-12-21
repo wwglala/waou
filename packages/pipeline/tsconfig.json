@@ -6,8 +6,6 @@
     ],
     "module": "ESNext",
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationDir": "./lib"
   },
   "exclude": [
     "node_modules"

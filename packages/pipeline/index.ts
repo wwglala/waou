@@ -51,7 +51,7 @@ interface TaskConfig {
   cacheTime: number;
 }
 
-class Task<C, T> extends Emmitter<T>{
+export class Task<C, T> extends Emmitter<T>{
   private status: TaskStatusType;
   private retried: number;
   constructor(private name: string, private cb: Fn<C>, private config?: Partial<TaskConfig>) {
@@ -65,6 +65,18 @@ class Task<C, T> extends Emmitter<T>{
       cacheTime: 0,
       ...this.config
     }
+  }
+
+  on(type: TaskStatusType, fn: Fn<T>): void {
+    super.on(type,fn)
+  }
+
+  once(type: TaskStatusType, fn: Fn<T>): void {
+    super.on(type,fn)
+  }
+
+  emit(type: TaskStatusType, payload?: T): void {
+    super.emit(type,payload)
   }
 
   run(context: C) {
@@ -91,9 +103,3 @@ class Task<C, T> extends Emmitter<T>{
     })
   }
 }
-
-
-new Task('wwg', context => {
-  console.log(context);
-
-})
