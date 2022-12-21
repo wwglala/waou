@@ -95,7 +95,7 @@ export class Task<C, T> extends Emmitter<T>{
           this.emit(TaskStatus.FAIL, e)
           break;
         case 'ignore':
-          this.emit(TaskStatus.DONE, e)
+          this.emit(TaskStatus.DONE, this.config.fallback)
           break
         default:
           break
