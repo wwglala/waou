@@ -18,6 +18,7 @@ const Context = createContext<ContextType>({
   modalContainer: { current: [] },
   updateModal: (f) => {},
   registerModal: (f) => {},
+  init: false,
 });
 interface ModalConfig<T = any, V = any> {
   Dialog: T;
@@ -63,7 +64,7 @@ export function useModal<T>(
   const recordProps = useRef<OutPropsType<T>>({});
   const context = useContext(Context);
 
-  if (!context) {
+  if (!context.init) {
     throw new Error(`useModal !
 
     please abide by React.Context usage, use the ModalProvider to init!
@@ -76,7 +77,6 @@ export function useModal<T>(
   const dispatch = (visible: boolean, outProps?: OutPropsType<T>) => {
     const currentRenderProps = outProps || recordProps.current;
     recordProps.current = outProps;
-    console.log("=====");
 
     const {
       modalProps: dispatchModalProps,
@@ -221,6 +221,7 @@ interface ContextType {
   modalContainer: MutableRefObject<Array<ModalStore<any>>>;
   registerModal: (f: Fn) => void;
   updateModal: (f: Fn) => void;
+  init: boolean;
 }
 interface ModalProvider {
   (props: ModalProviderProps): JSX.Element;
@@ -254,6 +255,7 @@ export const ModalProvider: ModalProvider = (props: ModalProviderProps) => {
       modalContainer,
       registerModal,
       updateModal,
+      init: true,
     };
   }, []);
 
@@ -266,7 +268,7 @@ export const ModalProvider: ModalProvider = (props: ModalProviderProps) => {
   }, []);
 
   const modalAction = useMemo(
-    () => ({ modalContainer, updateModal, registerModal }),
+    () => ({ modalContainer, updateModal, registerModal, init: true }),
     []
   );
 
