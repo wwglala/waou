@@ -1,12 +1,12 @@
 import babel from "@rollup/plugin-babel";
 import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-typescript";
-import typescript from "@rollup/plugin-commonjs";
+import typescript from "@rollup/plugin-typescript";
+import commonjs from "@rollup/plugin-commonjs";
 import dts from "rollup-plugin-dts";
 
 export default [
   {
-    input: "./index.tsx",
+    input: "./index.ts",
     output: [
       {
         file: "./lib/index.js",
@@ -28,7 +28,7 @@ export default [
     ],
   },
   {
-    input: "./index.tsx",
+    input: "./index.ts",
     output: {
       file: "./index.d.ts",
     },

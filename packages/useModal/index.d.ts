@@ -1,43 +1,27 @@
-import { ReactElement, FunctionComponent, MutableRefObject } from 'react';
+import { ComponentType, ReactNode, FunctionComponent } from 'react';
 
-interface ModalConfig<T = any, V = any> {
-    Dialog: T;
-    Drawer: V;
+declare enum Modal_Type {
+    modal = "modal",
+    sideSheet = "sideSheet"
 }
-interface OutPropsType<T> {
-    modalProps?: T;
-    props?: any;
-    [x: string]: any;
-}
-declare type Dispatch<T> = (visible: boolean, outProps?: OutPropsType<T>) => void;
-declare type FirstParamType = ComponentType | ReactElement | FunctionComponent<any>;
-interface ModalStore<T> {
-    id: Symbol;
-    visible: boolean;
-    Component: FirstParamType;
-    dispatch: (visible: boolean, props?: OutPropsType<T>) => void;
-    modalProps?: T;
-    props?: any;
-}
-interface ComponentType {
-    type: "Dialog" | "Drawer";
-    Component: ReactElement | FunctionComponent<any>;
-}
-declare function useModal<T>(Component: FirstParamType, modalProps?: T, deps?: Readonly<any[]>): [Dispatch<T>];
 interface ModalProviderProps {
-    config: ModalConfig;
-    children?: any;
+    [Modal_Type.modal]: ComponentType;
+    [Modal_Type.sideSheet]: ComponentType;
+    children: ReactNode;
 }
-declare type Fn = (store: Array<ModalStore<any>>) => Array<ModalStore<any>>;
-interface ContextType {
-    modalContainer: MutableRefObject<Array<ModalStore<any>>>;
-    registerModal: (f: Fn) => void;
-    updateModal: (f: Fn) => void;
+interface Param2Props<T> {
+    modalProps: T;
+    [x: string]: unknown;
 }
-interface ModalProvider {
-    (props: ModalProviderProps): JSX.Element;
-    context?: ContextType;
+interface Dispatch<T> {
+    (visible: boolean, props: Param2Props<T>): void;
 }
-declare const ModalProvider: ModalProvider;
+interface useModalHandler {
+    <T>(FunctionComponent: FunctionComponent, props: Param2Props<T>, deps: Readonly<unknown[]>): [Dispatch<T>];
+}
+
+declare function ModalProvider(props: ModalProviderProps): JSX.Element;
+
+declare const useModal: useModalHandler;
 
 export { ModalProvider, useModal };
