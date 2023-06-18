@@ -1,10 +1,10 @@
 {
   "name": "@waou/use-modal",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "typings": "lib/index.d.ts",
+  "typings": "index.d.ts",
   "scripts": {
     "build": "rollup --config",
     "prepublish": "yarn build"
@@ -12,7 +12,7 @@
   "files": [
     "lib/",
     "es/",
-    "types/"
+    "index.d.ts"
   ],
   "repository": {
     "url": "https://github.com/wwglala/waou/tree/master/packages/useModal"
