@@ -1,10 +1,10 @@
-import React, { useRef, useState, useMemo, useContext } from "react";
+import React, { useRef, useState, useMemo, useContext, memo } from "react";
 import { ModalProviderProps, registerStoreInstance } from "./types";
 import { useRootRegisterModal } from "./useRootRegisterModal";
 import { ModalContext } from "./context";
 import { Portal } from "./Portal";
 
-export function ModalProvider(props: ModalProviderProps) {
+export const ModalProvider = memo((props: ModalProviderProps) =>{
   const { modal, sideSheet, children } = props;
   const { config } = useContext(ModalContext);
 
@@ -36,4 +36,4 @@ export function ModalProvider(props: ModalProviderProps) {
       <Portal visibleIds={visibleIds}></Portal>
     </ModalContext.Provider>
   );
-}
+})
