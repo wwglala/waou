@@ -21,27 +21,28 @@
 ```js
 npm i @waou/use-modal
 yarn add @waou/use-modal
+pnpm add @waou/use-modal
 ```
 
 # Usage
 
 ### basic use
 
-```js
+```jsx
 import React from "react";
 import ReactDOM from "react-dom";
 import { ModalProvider } from "@waou/use-modal";
-import { Dialog, Drawer } from "@alifd/next";
+import { Modal, SideSheet } from "@douyinfe/semi-ui";
 
 function Child() {
-  const [dispatch] = useModal(<YOUR_Component />, { title: "modal" });
+  const [dispatch] = useModal(FunctionComponent, { modalProps: { title: "modal" }});
 
   return <button onClick={() => dispatch(true)}>open</button>;
 }
 
 function App() {
   return (
-    <ModalProvider config={{ Dialog, Drawer }}>
+    <ModalProvider modal={Modal} sideSheet={SideSheet}>
       <Child />
     </ModalProvider>
   );
@@ -52,12 +53,12 @@ ReactDOM.render(<App />, document.getElement("root"));
 
 ### support parent refresh
 
-```js
+```jsx
 function Child() {
   const [count, setCount] = useState(0);
   const [dispatch] = useModal(
-    <YOUR_Component count={count} />,
-    { title: "modal" },
+    FunctionComponent,
+    { count, modalProps: { title: "modal" } },
     [count]
   );
 
@@ -70,7 +71,7 @@ function Child() {
 
 function App() {
   return (
-    <ModalProvider config={{ Dialog, Drawer }}>
+    <ModalProvider modal={Modal} sideSheet={SideSheet}>
       <Child />
     </ModalProvider>
   );
@@ -81,19 +82,19 @@ ReactDOM.render(<App />, document.getElement("root"));
 
 ### support share context
 
-```js
+```jsx
 import React, { createContext } from "react";
 
 const Context = createContext(0);
 
-function YOUR_Component() {
+function Demo() {
   const count = useContext(Context);
   return <div>{count}</div>;
 }
 
 function Child() {
   const [count, setCount] = useState(0);
-  const [dispatch] = useModal(<YOUR_Component />, { title: "modal" });
+  const [dispatch] = useModal(Demo, { modalProps: { title: "modal" } });
 
   useEffect(() => {
     setCount((count) => count + 1);
@@ -105,7 +106,7 @@ function Child() {
 function App() {
   return (
     <Context.Provider value={count}>
-      <ModalProvider config={{ Dialog, Drawer }}>
+      <ModalProvider modal={Modal} sideSheet={SideSheet}>
         <Child />
       </ModalProvider>
     </Context.Provider>
@@ -115,10 +116,64 @@ function App() {
 ReactDOM.render(<App />, document.getElement("root"));
 ```
 
+### delivery and inject props
+```tsx
+import { useInjectProps } from '@waou/use-modal'
+
+function ModalContent() {
+  const { injectModalProps } = useInjectProps()
+
+  useEffect(()=>{
+    injectModalProps({
+      async onOk(){
+        await ajax()
+      }
+    })
+  },[])
+
+  return <div>i am modal content</div>;
+}
+
+function Demo() {
+  const [dispatch] = useModal(ModalContent)
+
+  
+  return <button onClick={()=>{dispatch(true)}}>open</button>;
+}
+
+
+
+function App() {
+  return (
+    <ModalProvider modal={Modal} sideSheet={SideSheet}>
+      <Demo />
+    </ModalProvider>
+  );
+}
+
+ReactDOM.render(<App />, document.getElement("root"));
+```
+
+
 # API
 
-### params
+### ModalProvider
+|      modal       |   sideSheet   | 
+| :------------------: | :------------: | 
+| functionComponent | functionComponent | 
 
-|      component       |   modalProps   | deps  |
+
+### useModal
+
+|      component       |   props   | deps  |
 | :------------------: | :------------: | :---: |
-| function/JSX.Element | title、onOk... | Array |
+| function/JSX.Element | ......... | Array |
+
+### useInjectProps
+
+```ts
+
+const { onClose,onResolve,onReject,injectModalProps } = useInjectProps()
+
+
+```
