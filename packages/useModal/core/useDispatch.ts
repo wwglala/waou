@@ -8,29 +8,26 @@ export const useDispatch = (
   FC: FunctionComponent,
   props: Param2Props<unknown>
 ) => {
-  const { registerModal, setVisibleIds } = useContext(ModalContext);
+  const { registerOrUpdateModal, setVisibleIds } = useContext(ModalContext);
 
   const dispatch: ReturnType<useRegisterModalHandler> = useCallback(
     (visible, dispatchProps) => {
       return new Promise((resolve, reject) => {
-        // exist propr and update register
-        if (props) {
-          registerModal({
-            type,
-            modalId,
-            Component: FC,
-            resolve,
-            reject,
-            props: {
-              ...props,
-              ...dispatchProps,
-              modalProps: {
-                ...(dispatchProps?.modalProps as any),
-                __freeze: Boolean(dispatchProps?.modalProps), // 标示锁定 dispatch modalProps
-              },
+        registerOrUpdateModal({
+          type,
+          modalId,
+          Component: FC,
+          resolve,
+          reject,
+          props: {
+            ...props,
+            ...dispatchProps,
+            modalProps: {
+              ...(dispatchProps?.modalProps as any),
+              __freeze: Boolean(dispatchProps?.modalProps), // 标示锁定 dispatch modalProps
             },
-          });
-        }
+          },
+        });
 
         if (!visible) {
           setVisibleIds((beforeVids) =>

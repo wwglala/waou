@@ -6,13 +6,13 @@ import { Portal } from "./Portal";
 
 export const ModalProvider = memo((props: ModalProviderProps) =>{
   const { modal, sideSheet, children } = props;
-  const { config } = useContext(ModalContext);
 
   const [visibleIds, setVisibleIds] = useState<Symbol[]>([]);
   const registerStore = useRef<registerStoreInstance[]>([]);
-  const registerModal = useRootRegisterModal(registerStore);
+  const registerOrUpdateModal = useRootRegisterModal(registerStore);
 
   // context link
+  const { config } = useContext(ModalContext);
   const modalConfig = useMemo(() => {
     if (!modal || !sideSheet) {
       return config;
@@ -24,7 +24,7 @@ export const ModalProvider = memo((props: ModalProviderProps) =>{
     return {
       init: true,
       config: modalConfig,
-      registerModal,
+      registerOrUpdateModal,
       registerStore,
       setVisibleIds,
     };

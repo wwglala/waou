@@ -9,14 +9,14 @@ export const useRegisterModal: useRegisterModalHandler = (
   props,
   deps
 ) => {
-  const { registerModal, setVisibleIds } = useContext(ModalContext);
+  const { registerOrUpdateModal, setVisibleIds } = useContext(ModalContext);
 
   const modalId = useMemo(() => Symbol("useModal_id"), []);
 
   // sync register/unregister
   useMemo(
     () =>
-      registerModal({
+    registerOrUpdateModal({
         type,
         modalId,
         Component: FunctionComponent,

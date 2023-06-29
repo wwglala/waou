@@ -8,7 +8,6 @@ interface PortalProps {
 
 interface RenderProps extends registerStoreInstance, PortalProps {}
 const Render = memo((props: RenderProps) =>{
-  const { config } = useContext(ModalContext);
   const {
     visibleIds,
     modalId,
@@ -18,19 +17,22 @@ const Render = memo((props: RenderProps) =>{
     resolve,
     reject,
   } = props;
+
+  const { config } = useContext(ModalContext);
   const { modalProps, ...insProps } = insPropsAndModalProps;
-  const ModalComponent = config![type];
+  const ModalComponent = config[type];
 
   const { setVisibleIds } = useContext(ModalContext);
-  const [injectProps, setInjectProps] =
+
+  const [injectModalProps, setInjectModalProps] =
     useState<Param2Props<any>["modalProps"]>();
 
   const onClose = useCallback(() => {
     setVisibleIds((beforeVids) => beforeVids.filter((id) => id !== modalId));
   }, []);
 
-  const injectModalProps = useCallback((injectParams) => {
-    setInjectProps((oldProps) => ({
+  const injectModalPropsHandler = useCallback((injectParams) => {
+    setInjectModalProps((oldProps) => ({
       ...oldProps,
       ...injectParams,
     }));
@@ -48,12 +50,12 @@ const Render = memo((props: RenderProps) =>{
 
   const onOk = useCallback(async () => {
     let _onOk = onClose
-    if (injectProps?.onOk) {
-      _onOk = injectProps.onOk
+    if (injectModalProps?.onOk) {
+      _onOk = injectModalProps.onOk
     } else if ((modalProps as any).onOk) {
       _onOk = (modalProps as any).onOk
     }
-    injectModalProps({ confirmLoading: true })
+    injectModalPropsHandler({ confirmLoading: true })
     let err;
       try {
         const res = await _onOk()
@@ -62,12 +64,12 @@ const Render = memo((props: RenderProps) =>{
         err = e
         onReject(e)
       } finally {
-        injectModalProps({ confirmLoading: false })
+        injectModalPropsHandler({ confirmLoading: false })
         if (err) {
           throw err
         }
       }
-  },[injectProps])
+  },[injectModalProps])
 
   return (
     <ModalInsContext.Provider
@@ -82,7 +84,7 @@ const Render = memo((props: RenderProps) =>{
         visible={visibleIds.includes(modalId)}
         onCancel={onClose}
         {...(modalProps as any)}
-        {...injectProps}
+        {...injectModalProps}
         onOk={onOk}
       >
         <Component {...insProps} />

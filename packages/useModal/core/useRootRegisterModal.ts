@@ -4,7 +4,7 @@ import { registerModalHandler, registerStoreInstance } from "./types";
 export const useRootRegisterModal = (
   registerStore: MutableRefObject<registerStoreInstance[]>
 ) => {
-  const rootRegister: registerModalHandler = useCallback((instance) => {
+  const rootRegisterOrUpdate: registerModalHandler = useCallback((instance) => {
     const hasInstance = registerStore.current.find(
       (ins) => ins.modalId === instance.modalId
     );
@@ -48,5 +48,5 @@ export const useRootRegisterModal = (
     };
   }, []);
 
-  return rootRegister;
+  return rootRegisterOrUpdate;
 };
