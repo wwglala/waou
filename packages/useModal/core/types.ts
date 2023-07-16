@@ -25,29 +25,31 @@ export interface Dispatch<T> {
 
 export interface useModalHandler {
   <T>(
-    FunctionComponent: FunctionComponent<any>,
+    FunctionComponent: FunctionComponent<any> | string,
     props?: Param2Props<T>,
     deps?: Readonly<unknown[]>
   ): [Dispatch<T>];
+
+  useRegister: (id: string, Fc: FunctionComponent<any>) => void;
 }
 
 export interface registerModalProps<T> {
   type: Modal_Type;
-  modalId: Symbol;
-  Component: FunctionComponent<any>;
+  modalId: symbol | string;
+  Component: FunctionComponent<any> | string;
   props: Param2Props<T>;
   resolve?: (value: { value: unknown; onClose: () => void }) => void;
   reject?: (err: any) => void;
 }
 
 export interface registerModalHandler {
-  <T>(instance: registerModalProps<T>): void;
+  <T>(instance: registerModalProps<T>): () => void;
 }
 
 export interface useRegisterModalHandler {
   <T>(
     type: Modal_Type,
-    FunctionComponent: FunctionComponent,
+    FunctionComponent: FunctionComponent | string,
     props: Param2Props<T>,
     deps: Readonly<unknown[]>
   ): Dispatch<T>;

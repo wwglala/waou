@@ -3,11 +3,11 @@ import { ModalContext, ModalInsContext } from "./context";
 import { Param2Props, registerStoreInstance } from "./types";
 
 interface PortalProps {
-  visibleIds: Symbol[];
+  visibleIds: (symbol | string)[];
 }
 
 interface RenderProps extends registerStoreInstance, PortalProps {}
-const Render = memo((props: RenderProps) =>{
+const Render = memo((props: RenderProps) => {
   const {
     visibleIds,
     modalId,
@@ -20,7 +20,7 @@ const Render = memo((props: RenderProps) =>{
 
   const { config } = useContext(ModalContext);
   const { modalProps, ...insProps } = insPropsAndModalProps;
-  const ModalComponent = config[type];
+  const ModalComponent = config![type];
 
   const { setVisibleIds } = useContext(ModalContext);
 
@@ -31,12 +31,15 @@ const Render = memo((props: RenderProps) =>{
     setVisibleIds((beforeVids) => beforeVids.filter((id) => id !== modalId));
   }, []);
 
-  const injectModalPropsHandler = useCallback((injectParams) => {
-    setInjectModalProps((oldProps) => ({
-      ...oldProps,
-      ...injectParams,
-    }));
-  }, []);
+  const injectModalPropsHandler = useCallback(
+    (injectParams: Param2Props<any>["modalProps"]) => {
+      setInjectModalProps((oldProps: Param2Props<any>["modalProps"]) => ({
+        ...oldProps,
+        ...injectParams,
+      }));
+    },
+    []
+  );
 
   const onResolve = (value: unknown) => {
     resolve?.({ value, onClose });
@@ -49,33 +52,33 @@ const Render = memo((props: RenderProps) =>{
   };
 
   const onOk = useCallback(async () => {
-    let _onOk = onClose
+    let _onOk = onClose;
     if (injectModalProps?.onOk) {
-      _onOk = injectModalProps.onOk
+      _onOk = injectModalProps.onOk;
     } else if ((modalProps as any).onOk) {
-      _onOk = (modalProps as any).onOk
+      _onOk = (modalProps as any).onOk;
     }
-    injectModalPropsHandler({ confirmLoading: true })
+    injectModalPropsHandler({ confirmLoading: true });
     let err;
-      try {
-        const res = await _onOk()
-        onResolve(res)
-      } catch (e) {
-        err = e
-        onReject(e)
-      } finally {
-        injectModalPropsHandler({ confirmLoading: false })
-        if (err) {
-          throw err
-        }
-      }
-  },[injectModalProps])
+    try {
+      const res = await _onOk();
+      onResolve(res);
+    } catch (e) {
+      err = e;
+      reject?.(err);
+    } finally {
+      injectModalPropsHandler({ confirmLoading: false });
+      // if (err) {
+      //   throw err
+      // }
+    }
+  }, [injectModalProps]);
 
   return (
     <ModalInsContext.Provider
       value={{
         onClose,
-        injectModalProps,
+        injectModalProps: injectModalPropsHandler,
         onResolve,
         onReject,
       }}
@@ -91,9 +94,9 @@ const Render = memo((props: RenderProps) =>{
       </ModalComponent>
     </ModalInsContext.Provider>
   );
-})
+});
 
-export const Portal = memo((props: PortalProps)=> {
+export const Portal = memo((props: PortalProps) => {
   const { visibleIds } = props;
   const { registerStore } = useContext(ModalContext);
 
@@ -104,4 +107,4 @@ export const Portal = memo((props: PortalProps)=> {
       ))}
     </>
   );
-})
+});

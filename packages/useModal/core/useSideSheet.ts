@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { ModalContext } from "./context";
 import { Modal_Type, useModalHandler } from "./types";
 import { useRegisterModal } from "./useRegisterModal";
+import { useRegister } from "./useRegister";
 
 export const useSideSheet: useModalHandler = (
   FunctionComponent,
@@ -24,4 +25,8 @@ export const useSideSheet: useModalHandler = (
   );
 
   return [dispatch];
+};
+
+useSideSheet.useRegister = (id, Fc) => {
+  useRegister(Modal_Type.sideSheet, id, Fc);
 };

@@ -1,17 +1,17 @@
-import { MutableRefObject, useCallback } from "react";
-import { registerModalHandler, registerStoreInstance } from "./types";
+import { MutableRefObject, useCallback } from 'react';
+import { registerModalHandler, registerStoreInstance } from './types';
 
 export const useRootRegisterModal = (
-  registerStore: MutableRefObject<registerStoreInstance[]>
+  registerStore: MutableRefObject<registerStoreInstance[]>,
 ) => {
-  const rootRegisterOrUpdate: registerModalHandler = useCallback((instance) => {
+  const rootRegisterOrUpdate: registerModalHandler = useCallback(instance => {
     const hasInstance = registerStore.current.find(
-      (ins) => ins.modalId === instance.modalId
+      ins => ins.modalId === instance.modalId,
     );
     if (hasInstance) {
       // @todo modal props 需要更改，modalProps 可能不需要改变 ，实现 maybe 标记每一个props的key
       // 目前如果 dispatch 传递了 modalProps 则 freeze
-      registerStore.current = registerStore.current.map((oldIns) => {
+      registerStore.current = registerStore.current.map(oldIns => {
         if (oldIns.modalId === instance.modalId) {
           const modalProps = instance.props.modalProps?.__freeze
             ? {
@@ -44,7 +44,7 @@ export const useRootRegisterModal = (
     }
 
     return () => {
-      registerStore.current.filter((ins) => ins.modalId !== instance.modalId);
+      registerStore.current.filter(ins => ins.modalId !== instance.modalId);
     };
   }, []);
 

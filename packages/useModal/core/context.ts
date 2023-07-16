@@ -10,7 +10,7 @@ interface ModalContextProps {
   config: Omit<ModalProviderProps, "children"> | null;
   registerOrUpdateModal: registerModalHandler;
   registerStore: React.MutableRefObject<registerStoreInstance[]>;
-  setVisibleIds: React.Dispatch<React.SetStateAction<Symbol[]>>;
+  setVisibleIds: React.Dispatch<React.SetStateAction<(symbol | string)[]>>;
 }
 
 const noop = () => {};
@@ -19,7 +19,7 @@ export const ModalContext = createContext<ModalContextProps>({
   init: false,
   config: null,
   registerStore: { current: [] },
-  registerOrUpdateModal: noop,
+  registerOrUpdateModal: () => noop,
   setVisibleIds: noop,
 });
 
