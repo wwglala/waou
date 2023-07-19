@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useState } from "react";
+import React, { memo, useCallback, useContext, useMemo, useState } from "react";
 import { ModalContext, ModalInsContext } from "./context";
 import { Param2Props, registerStoreInstance } from "./types";
 
@@ -52,41 +52,34 @@ const Render = memo((props: RenderProps) => {
   };
 
   const onOk = useCallback(async () => {
-    let _onOk = onClose;
-    if (injectModalProps?.onOk) {
-      _onOk = injectModalProps.onOk;
-    } else if ((modalProps as any).onOk) {
-      _onOk = (modalProps as any).onOk;
-    }
+    const onSubmit = injectModalProps.onOk || injectModalProps.onOk || onClose;
     injectModalPropsHandler({ confirmLoading: true });
-    let err;
     try {
-      const res = await _onOk();
+      const res = await onSubmit();
       onResolve(res);
     } catch (e) {
-      err = e;
-      reject?.(err);
+      reject?.(e);
     } finally {
       injectModalPropsHandler({ confirmLoading: false });
-      // if (err) {
-      //   throw err
-      // }
     }
   }, [injectModalProps]);
 
+  const ModalInsContextValue = useMemo(
+    () => ({
+      onClose,
+      injectModalProps: injectModalPropsHandler,
+      onResolve,
+      onReject,
+    }),
+    []
+  );
+
   return (
-    <ModalInsContext.Provider
-      value={{
-        onClose,
-        injectModalProps: injectModalPropsHandler,
-        onResolve,
-        onReject,
-      }}
-    >
+    <ModalInsContext.Provider value={ModalInsContextValue}>
       <ModalComponent
         visible={visibleIds.includes(modalId)}
         onCancel={onClose}
-        {...(modalProps as any)}
+        {...modalProps}
         {...injectModalProps}
         onOk={onOk}
       >

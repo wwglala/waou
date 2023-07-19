@@ -1,20 +1,18 @@
-import { FunctionComponent, useCallback, useContext } from 'react';
-import { Modal_Type, Param2Props, useRegisterModalHandler } from './types';
-import { ModalContext } from './context';
+import { FunctionComponent, useCallback, useContext } from "react";
+import { Modal_Type, Param2Props, useRegisterModalHandler } from "./types";
+import { ModalContext } from "./context";
 
 export const useDispatch = (
   modalId: symbol | string,
   type: Modal_Type,
   FC: FunctionComponent,
-  props: Param2Props<unknown>,
+  props: Param2Props<unknown>
 ) => {
   const { registerOrUpdateModal, setVisibleIds } = useContext(ModalContext);
 
   const dispatch: ReturnType<useRegisterModalHandler> = useCallback(
     (visible, dispatchProps) =>
       new Promise((resolve, reject) => {
-        console.log('======');
-
         registerOrUpdateModal({
           type,
           modalId,
@@ -32,18 +30,20 @@ export const useDispatch = (
         });
 
         if (!visible) {
-          setVisibleIds(beforeVids => beforeVids.filter(id => id !== modalId));
+          setVisibleIds((beforeVids) =>
+            beforeVids.filter((id) => id !== modalId)
+          );
           return;
         }
         // show and update
-        setVisibleIds(beforeVids => {
+        setVisibleIds((beforeVids) => {
           if (!beforeVids.includes(modalId)) {
             return [...beforeVids, modalId];
           }
           return [...beforeVids];
         });
       }),
-    [],
+    [props]
   );
 
   return dispatch;
