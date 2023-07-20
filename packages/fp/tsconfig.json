@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "strict": true,
-    "suppressImplicitAnyIndexErrors": true,
     "esModuleInterop":true,
     "moduleResolution":"Node"
   },
