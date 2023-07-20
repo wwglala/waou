@@ -4,7 +4,7 @@ import { registerModalHandler, registerStoreInstance } from './types';
 export const useRootRegisterModal = (
   registerStore: MutableRefObject<registerStoreInstance[]>,
 ) => {
-  const rootRegisterOrUpdate: registerModalHandler = useCallback(instance => {
+  const registerModalInstance: registerModalHandler = useCallback(instance => {
     const hasInstance = registerStore.current.find(
       ins => ins.modalId === instance.modalId,
     );
@@ -13,20 +13,21 @@ export const useRootRegisterModal = (
       // 目前如果 dispatch 传递了 modalProps 则 freeze
       registerStore.current = registerStore.current.map(oldIns => {
         if (oldIns.modalId === instance.modalId) {
-          const modalProps = instance.props.modalProps?.__freeze
-            ? {
-                ...oldIns.props.modalProps,
-                ...instance.props.modalProps,
-              }
-            : oldIns.props.modalProps?.__freeze
-            ? {
-                ...instance.props.modalProps,
-                ...oldIns.props.modalProps,
-              }
-            : {
-                ...oldIns.props.modalProps,
-                ...instance.props.modalProps,
-              };
+          let modalProps;
+          if (
+            oldIns.props.modalProps?.__freeze &&
+            !instance.props.modalProps?.__freeze
+          ) {
+            modalProps = {
+              ...instance.props.modalProps,
+              ...oldIns.props.modalProps,
+            };
+          } else {
+            modalProps = {
+              ...oldIns.props.modalProps,
+              ...instance.props.modalProps,
+            };
+          }
 
           return {
             ...instance,
@@ -48,5 +49,5 @@ export const useRootRegisterModal = (
     };
   }, []);
 
-  return rootRegisterOrUpdate;
+  return registerModalInstance;
 };

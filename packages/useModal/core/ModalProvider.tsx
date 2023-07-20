@@ -9,7 +9,6 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
 
   const [visibleIds, setVisibleIds] = useState<(symbol | string)[]>([]);
   const registerStore = useRef<registerStoreInstance[]>([]);
-  const registerOrUpdateModal = useRootRegisterModal(registerStore);
 
   // context link
   const { config } = useContext(ModalContext);
@@ -20,11 +19,13 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
     return { modal, sideSheet };
   }, [modal, sideSheet, config]);
 
+  const registerModalInstance = useRootRegisterModal(registerStore);
+
   const contextValue = useMemo(
     () => ({
       init: true,
       config: modalConfig,
-      registerOrUpdateModal,
+      registerModalInstance,
       registerStore,
       setVisibleIds,
     }),

@@ -1,14 +1,14 @@
-import { createContext } from "react";
+import React, { createContext } from 'react';
 import {
   ModalProviderProps,
   registerModalHandler,
   registerStoreInstance,
-} from "./types";
+} from './types';
 
 interface ModalContextProps {
   init: boolean;
-  config: Omit<ModalProviderProps, "children"> | null;
-  registerOrUpdateModal: registerModalHandler;
+  config: Omit<ModalProviderProps, 'children'> | null;
+  registerModalInstance: registerModalHandler;
   registerStore: React.MutableRefObject<registerStoreInstance[]>;
   setVisibleIds: React.Dispatch<React.SetStateAction<(symbol | string)[]>>;
 }
@@ -19,7 +19,7 @@ export const ModalContext = createContext<ModalContextProps>({
   init: false,
   config: null,
   registerStore: { current: [] },
-  registerOrUpdateModal: () => noop,
+  registerModalInstance: () => noop,
   setVisibleIds: noop,
 });
 

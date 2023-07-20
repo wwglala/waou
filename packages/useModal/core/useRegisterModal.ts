@@ -1,46 +1,33 @@
-import { useContext, useEffect, useMemo } from 'react';
-import { ModalContext } from './context';
-import { useRegisterModalHandler } from './types';
-import { useDispatch } from './useDispatch';
+import { useContext, useEffect, useMemo } from "react";
+import { ModalContext } from "./context";
+import { useRegisterModalHandler } from "./types";
+import { useDispatch } from "./useDispatch";
+import { useUtils } from "./useUtils";
 
 export const useRegisterModal: useRegisterModalHandler = (
   type,
-  FunctionComponent,
+  component,
   props,
-  deps,
+  deps
 ) => {
-  const { registerOrUpdateModal, setVisibleIds, registerStore } =
-    useContext(ModalContext);
+  const { registerModalInstance, setVisibleIds } = useContext(ModalContext);
 
-  const modalId =
-    typeof FunctionComponent === 'string'
-      ? FunctionComponent
-      : useMemo(() => Symbol('useModal_id'), []);
+  const { modalId, functionComponent } = useUtils(component);
 
-  const Component = useMemo(() => {
-    const Comp =
-      typeof FunctionComponent === 'string'
-        ? registerStore.current.find(ins => ins.modalId === FunctionComponent)
-            ?.Component
-        : FunctionComponent;
-
-    return Comp;
-  }, []);
-
-  if (!Component || typeof Component === 'string') {
-    throw new Error('please check you register Name');
+  if (!functionComponent) {
+    throw new Error("Please check your register Name");
   }
 
   // sync register
   const destroy = useMemo(
     () =>
-      registerOrUpdateModal({
+      registerModalInstance({
         type,
         modalId,
-        Component,
+        Component: functionComponent,
         props,
       }),
-    [deps],
+    [deps]
   );
 
   // unregister
@@ -48,10 +35,10 @@ export const useRegisterModal: useRegisterModalHandler = (
 
   // update
   useEffect(() => {
-    setVisibleIds(beforeVids => [...beforeVids]);
+    setVisibleIds((beforeVids) =>
+      beforeVids.includes(modalId) ? [...beforeVids] : beforeVids
+    );
   }, deps);
 
-  const dispatch = useDispatch(modalId, type, Component, props);
-
-  return dispatch;
+  return useDispatch(modalId, type, functionComponent);
 };

@@ -1,50 +1,45 @@
-import { FunctionComponent, useCallback, useContext } from "react";
-import { Modal_Type, Param2Props, useRegisterModalHandler } from "./types";
-import { ModalContext } from "./context";
+import { FunctionComponent, useContext } from 'react';
+import { MODAL_TYPE, useRegisterModalHandler } from './types';
+import { ModalContext } from './context';
+import { eo } from './constants';
 
 export const useDispatch = (
   modalId: symbol | string,
-  type: Modal_Type,
+  type: MODAL_TYPE,
   FC: FunctionComponent,
-  props: Param2Props<unknown>
 ) => {
-  const { registerOrUpdateModal, setVisibleIds } = useContext(ModalContext);
+  const { registerModalInstance, setVisibleIds } = useContext(ModalContext);
 
-  const dispatch: ReturnType<useRegisterModalHandler> = useCallback(
-    (visible, dispatchProps) =>
-      new Promise((resolve, reject) => {
-        registerOrUpdateModal({
-          type,
-          modalId,
-          Component: FC,
-          resolve,
-          reject,
-          props: {
-            ...props,
-            ...dispatchProps,
-            modalProps: {
-              ...(dispatchProps?.modalProps as any),
-              __freeze: Boolean(dispatchProps?.modalProps), // 标示锁定 dispatch modalProps
-            },
-          },
-        });
+  const dispatch: ReturnType<useRegisterModalHandler> = (
+    visible,
+    dispatchProps = eo,
+  ) =>
+    new Promise((resolve, reject) => {
+      registerModalInstance({
+        type,
+        modalId,
+        Component: FC,
+        resolve,
+        reject,
+        props: {
+          ...dispatchProps,
+          ...dispatchProps?.modalProps,
+          __freeze: Boolean(dispatchProps?.modalProps),
+        },
+      });
 
-        if (!visible) {
-          setVisibleIds((beforeVids) =>
-            beforeVids.filter((id) => id !== modalId)
-          );
-          return;
-        }
-        // show and update
-        setVisibleIds((beforeVids) => {
-          if (!beforeVids.includes(modalId)) {
-            return [...beforeVids, modalId];
-          }
-          return [...beforeVids];
-        });
-      }),
-    [props]
-  );
+      // hide
+      if (!visible) {
+        setVisibleIds(beforeVids => beforeVids.filter(id => id !== modalId));
+        return;
+      }
+      // show and update
+      setVisibleIds(beforeVids =>
+        beforeVids.includes(modalId)
+          ? [...beforeVids]
+          : [...beforeVids, modalId],
+      );
+    });
 
   return dispatch;
 };

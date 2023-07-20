@@ -1,13 +1,14 @@
-import { FunctionComponent, useContext, useMemo } from "react";
-import { ModalContext } from "./context";
-import { Modal_Type } from "./types";
+import { FunctionComponent, useContext, useMemo } from 'react';
+import { ModalContext } from './context';
+import { MODAL_TYPE } from './types';
+import { eo } from './constants';
 
 export const useRegister = (
-  type: Modal_Type,
+  type: MODAL_TYPE,
   id: string,
-  Fc: FunctionComponent<any>
+  Fc: FunctionComponent<any>,
 ) => {
-  const { init, registerOrUpdateModal } = useContext(ModalContext);
+  const { init, registerModalInstance } = useContext(ModalContext);
   if (!init) {
     throw new Error(`useModal !
     please use the ModalProvider to init!
@@ -16,11 +17,11 @@ export const useRegister = (
   }
 
   useMemo(() => {
-    registerOrUpdateModal({
+    registerModalInstance({
       type,
       Component: Fc,
       modalId: id,
-      props: {},
+      props: eo,
     });
   }, []);
 };

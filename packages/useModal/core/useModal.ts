@@ -1,11 +1,14 @@
-import { useContext } from "react";
-import { ModalContext } from "./context";
-import { Modal_Type, useModalHandler } from "./types";
-import { useRegisterModal } from "./useRegisterModal";
-import { useRegister } from "./useRegister";
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useContext } from 'react';
+import { ModalContext } from './context';
+import { MODAL_TYPE, useModalHandler } from './types';
+import { useRegisterModal } from './useRegisterModal';
+import { useRegister } from './useRegister';
+import { eo, ea } from './constants';
 
-export const useModal: useModalHandler = (Fc, props = {}, deps = []) => {
+export const useModal: useModalHandler = (component, props = eo, deps = ea) => {
   const { init } = useContext(ModalContext);
+
   if (!init) {
     throw new Error(`useModal !
     please use the ModalProvider to init!
@@ -13,11 +16,11 @@ export const useModal: useModalHandler = (Fc, props = {}, deps = []) => {
   `);
   }
 
-  const dispatch = useRegisterModal(Modal_Type.modal, Fc, props, deps);
+  const dispatch = useRegisterModal(MODAL_TYPE.MODAL, component, props, deps);
 
   return [dispatch];
 };
 
-useModal.useRegister = (id, Fc) => {
-  useRegister(Modal_Type.modal, id, Fc);
+useModal.useRegister = (id, component) => {
+  useRegister(MODAL_TYPE.MODAL, id, component);
 };

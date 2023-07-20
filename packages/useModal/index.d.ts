@@ -1,12 +1,12 @@
-import { ComponentType, ReactNode, FunctionComponent } from 'react';
+import React, { ComponentType, ReactNode, FunctionComponent } from 'react';
 
-declare enum Modal_Type {
-    modal = "modal",
-    sideSheet = "sideSheet"
+declare enum MODAL_TYPE {
+    MODAL = "modal",
+    SIDE_SHEET = "sideSheet"
 }
 interface ModalProviderProps {
-    [Modal_Type.modal]: ComponentType;
-    [Modal_Type.sideSheet]: ComponentType;
+    [MODAL_TYPE.MODAL]?: ComponentType;
+    [MODAL_TYPE.SIDE_SHEET]?: ComponentType;
     children: ReactNode;
 }
 interface Param2Props<T> {
@@ -22,16 +22,18 @@ interface Dispatch<T> {
     }>;
 }
 interface useModalHandler {
-    <T>(FunctionComponent: FunctionComponent<any>, props?: Param2Props<T>, deps?: Readonly<unknown[]>): [Dispatch<T>];
+    <T>(FunctionComponent: FunctionComponent<any> | string, props?: Param2Props<T>, deps?: Readonly<unknown[]>): [Dispatch<T>];
+    useRegister: (id: string, Fc: FunctionComponent<any>) => void;
 }
 
-declare function ModalProvider(props: ModalProviderProps): JSX.Element;
+declare const ModalProvider: React.MemoExoticComponent<(props: ModalProviderProps) => JSX.Element>;
 
 declare const useModal: useModalHandler;
 
 declare const useInjectProps: <M>() => {
-    injectModalProps: (props: M) => void;
+    useInjectModalProps: (props: M, deps?: any[]) => void;
     onClose: () => void;
+    injectModalProps: <T>(props: T) => void;
     onResolve: (value: unknown) => void;
     onReject: (err: any) => void;
 };
