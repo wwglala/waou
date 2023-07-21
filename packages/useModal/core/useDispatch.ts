@@ -23,8 +23,10 @@ export const useDispatch = (
         reject,
         props: {
           ...dispatchProps,
-          ...dispatchProps?.modalProps,
-          __freeze: Boolean(dispatchProps?.modalProps),
+          modalProps: {
+            ...dispatchProps?.modalProps,
+            __freeze: Boolean(dispatchProps?.modalProps),
+          },
         },
       });
 
