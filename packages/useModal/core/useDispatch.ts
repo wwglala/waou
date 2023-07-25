@@ -2,6 +2,7 @@ import { FunctionComponent, useContext } from 'react';
 import { MODAL_TYPE, useRegisterModalHandler } from './types';
 import { ModalContext } from './context';
 import { eo } from './constants';
+import { useModal } from './useModal';
 
 export const useDispatch = (
   modalId: symbol | string,

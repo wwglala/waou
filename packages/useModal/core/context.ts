@@ -24,13 +24,11 @@ export const ModalContext = createContext<ModalContextProps>({
 });
 
 export const ModalInsContext = createContext<{
-  onClose: () => void;
-  injectModalProps: <T>(props: T) => void;
+  setModalProps: React.Dispatch<any>;
   onResolve: (value: unknown) => void;
   onReject: (err: any) => void;
 }>({
-  onClose: noop,
-  injectModalProps: noop,
+  setModalProps: noop,
   onResolve: noop,
   onReject: noop,
 });

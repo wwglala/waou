@@ -24,22 +24,12 @@ const Render = memo((props: RenderProps) => {
 
   const { setVisibleIds } = useContext(ModalContext);
 
-  const [injectModalProps, setInjectModalProps] =
+  const [injectModalProps, setModalProps] =
     useState<Param2Props<any>["modalProps"]>();
 
-  const onClose = useCallback(() => {
-    setVisibleIds((beforeVids) => beforeVids.filter((id) => id !== modalId));
-  }, []);
-
-  const injectModalPropsHandler = useCallback(
-    (injectParams: Param2Props<any>["modalProps"]) => {
-      setInjectModalProps((oldProps: Param2Props<any>["modalProps"]) => ({
-        ...oldProps,
-        ...injectParams,
-      }));
-    },
-    []
-  );
+  const onClose = () => {
+    setVisibleIds((beforeVids) => beforeVids.filter((id) => id !== modalId))
+  }
 
   const onResolve = (value: unknown) => {
     resolve?.({ value, onClose });
@@ -51,23 +41,9 @@ const Render = memo((props: RenderProps) => {
     onClose();
   };
 
-  const onOk = useCallback(async () => {
-    const onSubmit = injectModalProps.onOk || injectModalProps.onOk || onClose;
-    injectModalPropsHandler({ confirmLoading: true });
-    try {
-      const res = await onSubmit();
-      onResolve(res);
-    } catch (e) {
-      reject?.(e);
-    } finally {
-      injectModalPropsHandler({ confirmLoading: false });
-    }
-  }, [injectModalProps]);
-
   const ModalInsContextValue = useMemo(
     () => ({
-      onClose,
-      injectModalProps: injectModalPropsHandler,
+      setModalProps,
       onResolve,
       onReject,
     }),
@@ -78,10 +54,10 @@ const Render = memo((props: RenderProps) => {
     <ModalInsContext.Provider value={ModalInsContextValue}>
       <ModalComponent
         visible={visibleIds.includes(modalId)}
-        onCancel={onClose}
+        onCancel={onReject}
+        onOk={onResolve}
         {...modalProps}
         {...injectModalProps}
-        onOk={onOk}
       >
         <Component {...insProps} />
       </ModalComponent>

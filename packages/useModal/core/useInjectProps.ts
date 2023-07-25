@@ -1,17 +1,8 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { ModalInsContext } from "./context";
 
-export const useInjectProps = <M>() => {
+export const useInjectProps = () => {
   const handler = useContext(ModalInsContext);
 
-  const useInjectModalProps = (props: M, deps = []) => {
-    useEffect(() => {
-      handler.injectModalProps(props);
-    }, deps);
-  };
-
-  return {
-    ...handler,
-    useInjectModalProps,
-  };
+  return handler
 };
