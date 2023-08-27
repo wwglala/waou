@@ -1,11 +1,12 @@
-import React, { useRef, useState, useMemo, useContext, memo } from 'react';
+import { useRef, useState, useMemo, useContext, memo } from 'react';
 import { ModalProviderProps, StaticModalStore } from './types';
 import { ModalContext } from './context';
 import { Portal } from './Portal';
+import { eo } from './constants';
 import { updateAndSaveModal } from './updateAndSaveModal';
 
 export const ModalProvider = memo((props: ModalProviderProps) => {
-  const { modal, sideSheet, children } = props;
+  const { modal, sideSheet, loadingField, interceptor = eo, children } = props;
 
   const [visibleIds, setVisibleIds] = useState<(symbol | string)[]>([]);
 
@@ -18,7 +19,7 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
     return { modal, sideSheet };
   }, [modal, sideSheet, config]);
 
-  const modalStoreRef = useRef<StaticModalStore<{ title: string }>[]>([]);
+  const modalStoreRef = useRef<StaticModalStore<any>[]>([]);
 
   const destroyById = (modalId: string | symbol) => {
     modalStoreRef.current = modalStoreRef.current.filter(
@@ -30,6 +31,8 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
     () => ({
       init: true,
       config: modalConfig,
+      interceptor,
+      loadingField,
       modalStoreRef,
       setVisibleIds,
       destroyById,
@@ -45,3 +48,5 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
     </ModalContext.Provider>
   );
 });
+
+ModalProvider.displayName = 'ModalProvider';

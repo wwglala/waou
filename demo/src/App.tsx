@@ -1,24 +1,52 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Home } from './pages/Home';
+import { List } from './pages/List';
+import { useModal } from './hooks/useModal';
+import { ModalProvider } from './hooks/useModal';
 import { Modal, SideSheet } from '@douyinfe/semi-ui';
-import { ModalProvider } from '@waou/use-modal';
-import { MYModal } from './test/Modal';
-import { createContext, useEffect, useState } from 'react';
+import { useInjectProps } from './hooks/useModal';
+import { useEffect } from 'react';
 
-export const APPContext = createContext(0);
+function Layout() {
+  useModal.useRegister('wwg', () => {
+    const { setModalProps, onResolve } = useInjectProps();
 
-export default function App() {
-  const [state, setState] = useState(0);
+    useEffect(() => {
+      setModalProps((state: any) => {
+        return {
+          ...state,
+          ...{
+            async onOk() {
+              return new Promise(resolve => {
+                setTimeout(() => {
+                  onResolve();
+                  resolve('');
+                }, 1000);
+              });
+            },
+          },
+        };
+      });
+    }, []);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setState(state => state + 1);
-  //   }, 1000);
-  // }, [state]);
+    return <div>wwg</div>;
+  });
 
   return (
-    <APPContext.Provider value={state}>
-      <ModalProvider modal={Modal} sideSheet={SideSheet}>
-        <MYModal />
-      </ModalProvider>
-    </APPContext.Provider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home></Home>}></Route>
+        <Route path="/list" element={<List></List>}></Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default function App() {
+  return (
+    <ModalProvider modal={Modal} sideSheet={SideSheet} loadingField="loading">
+      <Layout></Layout>
+    </ModalProvider>
   );
 }

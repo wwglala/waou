@@ -28,6 +28,7 @@ module.exports = {
     static: './dist',
     client: {
       overlay: false
-    }
+    },
+    historyApiFallback: true,
   },
 };

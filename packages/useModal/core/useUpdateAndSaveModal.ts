@@ -42,9 +42,14 @@ export const useUpdateAndSaveModal = (
   }, deps);
 
   // destroy
-  useEffect(() => {
-    destroyById(modalId);
-  }, [modalId]);
+  useEffect(
+    () => () => {
+      if (typeof modalId !== 'string') {
+        destroyById(modalId);
+      }
+    },
+    [modalId],
+  );
 
   const dispatch: ReturnType<ReturnType<InitModalType>>[0] = (
     visible,
@@ -59,8 +64,8 @@ export const useUpdateAndSaveModal = (
           ...currentModalProps.props,
           ...dispatchProps,
           modalProps: {
-            ...(currentModalProps.props as any)?.modalProps,
-            ...dispatchProps?.modalProps,
+            ...(currentModalProps.props?.modalProps as any),
+            ...(dispatchProps?.modalProps as any),
           },
         },
       });

@@ -1,14 +1,17 @@
 import React, { createContext } from 'react';
-import { ModalProviderProps, StaticModalStore } from './types';
+import {
+  ModalProviderProps,
+  registerModalHandler,
+  registerStoreInstance,
+} from './types';
 import { noop } from './constants';
 
 interface ModalContextProps {
   init: boolean;
   config: Omit<ModalProviderProps, 'children'> | null;
-  modalStoreRef: React.MutableRefObject<StaticModalStore<any>[]>;
+  registerModalInstance: registerModalHandler;
+  registerStore: React.MutableRefObject<registerStoreInstance[]>;
   setVisibleIds: React.Dispatch<React.SetStateAction<(symbol | string)[]>>;
-  updateAndSaveModal: (modalInstance: StaticModalStore<any>) => void;
-  destroyById: (modalId: string | symbol) => void;
 }
 
 type SetStateAction<S> = S | ((prevState: S) => S);
@@ -16,18 +19,19 @@ type SetStateAction<S> = S | ((prevState: S) => S);
 export const ModalContext = createContext<ModalContextProps>({
   init: false,
   config: null,
-  modalStoreRef: { current: [] },
+  registerStore: { current: [] },
+  registerModalInstance: () => noop,
   setVisibleIds: noop,
-  updateAndSaveModal: noop,
-  destroyById: noop,
 });
 
 export const ModalInsContext = createContext<{
   setModalProps: <S>(setStateAction: SetStateAction<S>) => void;
-  onResolve: (value?: any) => void;
+  onResolve: (value?: unknown) => void;
   onReject: (err?: any) => void;
 }>({
   setModalProps: noop,
   onResolve: noop,
   onReject: noop,
 });
+
+// @todo plugin context

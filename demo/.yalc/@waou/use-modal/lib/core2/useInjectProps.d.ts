@@ -1,5 +1,5 @@
-export declare const useInjectProps: () => {
-    setModalProps: <S>(setStateAction: S | ((prevState: S) => S)) => void;
-    onResolve: (value?: unknown) => void;
+export declare const useInjectProps: <T>() => {
+    setModalProps: (setStateAction: T | ((prevState: T) => T)) => void;
+    onResolve: (value?: any) => void;
     onReject: (err?: any) => void;
 };

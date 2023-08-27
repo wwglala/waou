@@ -1,4 +1,4 @@
-export * from './core2/ModalProvider';
-export * from './core2/useInjectProps';
-export * from './core2/useModal';
-// export * from './core2/useSideSheet'
+export * from './core/ModalProvider';
+export * from './core/useInjectProps';
+export * from './core/createModalHook';
+export { MODAL_TYPE } from './core/constants';

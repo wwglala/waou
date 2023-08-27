@@ -1,14 +1,14 @@
-import { useRef, useState, useMemo, useContext, memo } from 'react';
-import { ModalProviderProps, StaticModalStore } from './types';
+import React, { useRef, useState, useMemo, useContext, memo } from 'react';
+import { ModalProviderProps, registerStoreInstance } from './types';
+import { useRootRegisterModal } from './useRootRegisterModal';
 import { ModalContext } from './context';
 import { Portal } from './Portal';
-import { eo } from './constants';
-import { updateAndSaveModal } from './updateAndSaveModal';
 
 export const ModalProvider = memo((props: ModalProviderProps) => {
-  const { modal, sideSheet, loadingField, interceptor = eo, children } = props;
+  const { modal, sideSheet, children } = props;
 
   const [visibleIds, setVisibleIds] = useState<(symbol | string)[]>([]);
+  const registerStore = useRef<registerStoreInstance[]>([]);
 
   // context link
   const { config } = useContext(ModalContext);
@@ -19,24 +19,15 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
     return { modal, sideSheet };
   }, [modal, sideSheet, config]);
 
-  const modalStoreRef = useRef<StaticModalStore<any>[]>([]);
-
-  const destroyById = (modalId: string | symbol) => {
-    modalStoreRef.current = modalStoreRef.current.filter(
-      mins => mins.modalId !== modalId,
-    );
-  };
+  const registerModalInstance = useRootRegisterModal(registerStore);
 
   const contextValue = useMemo(
     () => ({
       init: true,
       config: modalConfig,
-      interceptor,
-      loadingField,
-      modalStoreRef,
+      registerModalInstance,
+      registerStore,
       setVisibleIds,
-      destroyById,
-      updateAndSaveModal: updateAndSaveModal(modalStoreRef),
     }),
     [modalConfig],
   );
@@ -48,5 +39,3 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
     </ModalContext.Provider>
   );
 });
-
-ModalProvider.displayName = 'ModalProvider';

@@ -9,26 +9,27 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 
 var eo = {};
+var ea = [];
 var noop = function () { };
-var MODAL_TYPE;
+exports.MODAL_TYPE = void 0;
 (function (MODAL_TYPE) {
     MODAL_TYPE["MODAL"] = "modal";
     MODAL_TYPE["SIDE_SHEET"] = "sideSheet";
-})(MODAL_TYPE || (MODAL_TYPE = {}));
+})(exports.MODAL_TYPE || (exports.MODAL_TYPE = {}));
 
 var ModalContext = React.createContext({
     init: false,
     config: null,
     modalStoreRef: { current: [] },
     setVisibleIds: noop,
-    updateAndSaveModal: function () { return function () { }; }
+    updateAndSaveModal: noop,
+    destroyById: noop
 });
 var ModalInsContext = React.createContext({
     setModalProps: noop,
     onResolve: noop,
     onReject: noop
 });
-// @todo plugin context
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -84,40 +85,40 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
 };
 
 var RenderModal = function (props) {
-    var modalId = props.modalId, type = props.type, onOk = props.onOk, onCancel = props.onCancel, modalProps = props.modalProps, visibleIds = props.visibleIds, children = props.children;
+    var modalId = props.modalId, type = props.type, resolve = props.resolve, reject = props.reject, visibleIds = props.visibleIds, modalProps = props.modalProps, children = props.children;
     var config = React.useContext(ModalContext).config;
-    var ModalComponent = config[type];
-    var _a = React.useState(modalProps), injectModalProps = _a[0], setModalProps = _a[1];
-    var ModalInsContextValue = React.useMemo(function () { return ({
-        setModalProps: setModalProps,
-        onResolve: onOk,
-        onReject: onCancel
-    }); }, []);
-    return (React__default["default"].createElement(ModalComponent, __assign({ visible: visibleIds.includes(modalId), onCancel: onCancel, onOk: onOk }, injectModalProps),
-        React__default["default"].createElement(ModalInsContext.Provider, { value: ModalInsContextValue }, children)));
-};
-var Render = React.memo(function (props) {
-    var modalId = props.modalId, type = props.type, Component = props.Component, hookParam2Props = props.props, resolve = props.resolve, reject = props.reject, visibleIds = props.visibleIds;
-    var modalProps = hookParam2Props.modalProps, insProps = __rest(hookParam2Props, ["modalProps"]);
     var setVisibleIds = React.useContext(ModalContext).setVisibleIds;
+    var _a = React.useState(modalProps), injectModalProps = _a[0], setModalProps = _a[1];
+    var ModalComponent = config[type];
     var onClose = function () {
         setVisibleIds(function (beforeVids) { return beforeVids.filter(function (id) { return id !== modalId; }); });
     };
     var onResolve = function (value) {
-        resolve === null || resolve === void 0 ? void 0 : resolve(value);
+        resolve(value);
         onClose();
     };
-    var onReject = function (err) {
-        reject === null || reject === void 0 ? void 0 : reject(err);
+    var onReject = function (e) {
+        reject(e);
         onClose();
     };
-    return (React__default["default"].createElement(RenderModal, { type: type, modalId: modalId, onCancel: onReject, onOk: onResolve, modalProps: modalProps, visibleIds: visibleIds },
-        React__default["default"].createElement(Component, __assign({}, insProps))));
-});
+    var ModalInsContextValue = React.useMemo(function () { return ({
+        setModalProps: setModalProps,
+        onResolve: onResolve,
+        onReject: onReject
+    }); }, []);
+    return (React__default["default"].createElement(ModalComponent, __assign({ visible: visibleIds.includes(modalId), onCancel: onReject, onOk: onResolve }, injectModalProps),
+        React__default["default"].createElement(ModalInsContext.Provider, { value: ModalInsContextValue }, children)));
+};
 var Portal = React.memo(function (props) {
     var visibleIds = props.visibleIds;
     var modalStoreRef = React.useContext(ModalContext).modalStoreRef;
-    return (React__default["default"].createElement(React__default["default"].Fragment, null, modalStoreRef.current.map(function (ins, idx) { return (React__default["default"].createElement(Render, __assign({ key: idx }, ins, { visibleIds: visibleIds }))); })));
+    return (React__default["default"].createElement(React__default["default"].Fragment, null, modalStoreRef.current.map(function (modalInstance, idx) {
+        var Component = modalInstance.Component, props = modalInstance.props;
+        // eslint-disable-next-line react/prop-types
+        var modalProps = props.modalProps, insProps = __rest(props, ["modalProps"]);
+        return (React__default["default"].createElement(RenderModal, __assign({ key: idx }, modalInstance, { visibleIds: visibleIds, modalProps: modalProps }),
+            React__default["default"].createElement(Component, __assign({}, insProps))));
+    })));
 });
 
 var updateAndSaveModal = function (modalStoreRef) {
@@ -152,21 +153,27 @@ var ModalProvider = React.memo(function (props) {
         return { modal: modal, sideSheet: sideSheet };
     }, [modal, sideSheet, config]);
     var modalStoreRef = React.useRef([]);
-    var _updateAndSaveModal = React.useCallback(updateAndSaveModal(modalStoreRef), []);
+    var destroyById = function (modalId) {
+        modalStoreRef.current = modalStoreRef.current.filter(function (mins) { return mins.modalId !== modalId; });
+    };
     var contextValue = React.useMemo(function () { return ({
         init: true,
         config: modalConfig,
         modalStoreRef: modalStoreRef,
         setVisibleIds: setVisibleIds,
-        updateAndSaveModal: _updateAndSaveModal
+        destroyById: destroyById,
+        updateAndSaveModal: updateAndSaveModal(modalStoreRef)
     }); }, [modalConfig]);
+
+    console.log('>>>>>');
     return (React__default["default"].createElement(ModalContext.Provider, { value: contextValue },
         children,
         React__default["default"].createElement(Portal, { visibleIds: visibleIds })));
 });
 
 var useInjectProps = function () {
-    return React.useContext(ModalInsContext);
+    var _a = React.useContext(ModalInsContext), setModalProps = _a.setModalProps, otherProps = __rest(_a, ["setModalProps"]);
+    return __assign(__assign({}, otherProps), { setModalProps: (setModalProps) });
 };
 
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -192,7 +199,7 @@ var useModalId = function (context) {
 };
 
 var useUpdateAndSaveModal = function (type, component, props, deps) {
-    var _a = React.useContext(ModalContext), setVisibleIds = _a.setVisibleIds, updateAndSaveModal = _a.updateAndSaveModal;
+    var _a = React.useContext(ModalContext), setVisibleIds = _a.setVisibleIds, updateAndSaveModal = _a.updateAndSaveModal, destroyById = _a.destroyById;
     var _b = useModalId(component), modalId = _b.modalId, functionComponent = _b.component;
     var currentModalProps = {
         type: type,
@@ -200,19 +207,20 @@ var useUpdateAndSaveModal = function (type, component, props, deps) {
         Component: functionComponent,
         props: props
     };
-    // update @todo 渲染了才需要更新
-    var destroy = React.useMemo(function () {
+    // update
+    React.useMemo(function () {
         return updateAndSaveModal(__assign(__assign({}, currentModalProps), { resolve: noop, reject: noop, props: props }));
     }, deps);
-    React.useEffect(function () {
-        destroy();
-    }, []);
     // update
     React.useEffect(function () {
         setVisibleIds(function (beforeVids) {
             return beforeVids.includes(modalId) ? __spreadArray([], beforeVids, true) : beforeVids;
         });
     }, deps);
+    // destroy
+    React.useEffect(function () {
+        destroyById(modalId);
+    }, [modalId]);
     var dispatch = function (visible, dispatchProps) {
         return new Promise(function (resolve, reject) {
             var _a;
@@ -233,9 +241,9 @@ var useUpdateAndSaveModal = function (type, component, props, deps) {
 };
 
 /* eslint-disable react-hooks/rules-of-hooks */
-var initModalType = function (type) {
+var createModalHook = function (type) {
     var useModal = function (component, props, deps) {
-        if (deps === void 0) { deps = eo; }
+        if (deps === void 0) { deps = ea; }
         var init = React.useContext(ModalContext).init;
         if (!init) {
             throw new Error("useModal !\n      please use the ModalProvider to init!\n      like this: <ModalProvider modal={Modal} sideSheet={sideSheet}>{children}</ModalProvider>\n    ");
@@ -243,9 +251,25 @@ var initModalType = function (type) {
         var dispatch = useUpdateAndSaveModal(type, component, props, deps);
         return [dispatch];
     };
+    useModal.useRegister = function (modalId, Component) {
+        var _a = React.useContext(ModalContext), init = _a.init, updateAndSaveModal = _a.updateAndSaveModal;
+        if (!init) {
+            throw new Error("useModal !\n    please use the ModalProvider to init!\n    like this: <ModalProvider modal={Modal} sideSheet={sideSheet}>{children}</ModalProvider>\n  ");
+        }
+        React.useMemo(function () {
+            updateAndSaveModal({
+                type: type,
+                modalId: modalId,
+                Component: Component,
+                props: eo,
+                reject: noop,
+                resolve: noop
+            });
+        }, []);
+    };
     return useModal;
 };
 
 exports.ModalProvider = ModalProvider;
-exports.initModalType = initModalType;
+exports.createModalHook = createModalHook;
 exports.useInjectProps = useInjectProps;

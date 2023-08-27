@@ -16,7 +16,7 @@ const RenderModal = (
 
   const { config } = useContext(ModalContext);
 
-  const { setVisibleIds } = useContext(ModalContext);
+  const { setVisibleIds, loadingField } = useContext(ModalContext);
   const [injectModalProps, setModalProps] = useState(modalProps);
 
   const ModalComponent = config![type]!;
@@ -44,12 +44,25 @@ const RenderModal = (
     [],
   );
 
+  const onOk = async () => {
+    if (loadingField) {
+      setModalProps((state: any) => ({ ...state, [loadingField]: true }));
+    }
+    try {
+      await injectModalProps?.onOk();
+    } finally {
+      if (loadingField) {
+        setModalProps((state: any) => ({ ...state, [loadingField]: false }));
+      }
+    }
+  };
+
   return (
     <ModalComponent
       visible={visibleIds.includes(modalId)}
       onCancel={onReject}
-      onOk={onResolve}
       {...injectModalProps}
+      onOk={onOk}
     >
       <ModalInsContext.Provider value={ModalInsContextValue}>
         {children}
@@ -65,10 +78,9 @@ export const Portal = memo((props: PortalProps) => {
   return (
     <>
       {modalStoreRef.current.map((modalInstance, idx) => {
-        const { Component, props } = modalInstance;
+        const { Component, props: componentProps } = modalInstance;
 
-        // eslint-disable-next-line react/prop-types
-        const { modalProps, ...insProps } = props;
+        const { modalProps, ...insProps } = componentProps || {};
 
         return (
           <RenderModal
@@ -77,7 +89,7 @@ export const Portal = memo((props: PortalProps) => {
             visibleIds={visibleIds}
             modalProps={modalProps}
           >
-            <Component {...insProps}></Component>
+            <Component {...insProps} />
           </RenderModal>
         );
       })}
