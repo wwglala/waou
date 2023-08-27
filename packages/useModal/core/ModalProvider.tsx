@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useContext, memo } from 'react';
+import React, { useRef, useState, useMemo, useContext, memo } from 'react';
 import { ModalProviderProps, StaticModalStore } from './types';
 import { ModalContext } from './context';
 import { Portal } from './Portal';

@@ -5,8 +5,8 @@ import commonjs from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
 import fs from 'fs'
 
-fs.unlinkSync('./index.d.ts',err=>{
-  console.log(err);
+fs.unlinkSync('./index.d.ts',()=>{
+  console.log(1111);
 })
 
 export default [
