@@ -16,6 +16,10 @@ export const updateAndSaveModal =
             props: {
               ...oldIns.props,
               ...instance.props,
+              modalProps: {
+                ...oldIns.props?.modalProps,
+                ...instance.props?.modalProps,
+              },
             },
           };
         }

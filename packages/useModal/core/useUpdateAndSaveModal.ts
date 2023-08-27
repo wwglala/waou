@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo } from 'react';
-import { MODAL_TYPE, noop } from './constants';
+import { MODAL_TYPE, ea, noop } from './constants';
 import { InitModalType } from './types';
 import { ModalContext } from './context';
 import { useModalId } from './useModalId';
@@ -7,8 +7,8 @@ import { useModalId } from './useModalId';
 export const useUpdateAndSaveModal = (
   type: MODAL_TYPE,
   component: Parameters<ReturnType<InitModalType>>[0],
-  props: Parameters<ReturnType<InitModalType>>[1],
-  deps: Parameters<ReturnType<InitModalType>>[2],
+  props?: Parameters<ReturnType<InitModalType>>[1],
+  deps: Parameters<ReturnType<InitModalType>>[2] = ea,
 ) => {
   const { setVisibleIds, updateAndSaveModal, destroyById } =
     useContext(ModalContext);
