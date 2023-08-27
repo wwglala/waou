@@ -1,0 +1,28 @@
+{
+  "name": "@waou/use-modal",
+  "version": "2.1.1",
+  "description": "",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "build": "rollup --config"
+  },
+  "files": [
+    "lib/",
+    "es/",
+    "index.d.ts"
+  ],
+  "repository": {
+    "url": "https://github.com/wwglala/waou/tree/master/packages/useModal"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*"
+  },
+  "gitHead": "e1b96738fc6ff795cba6335fcb2207adde6e59a0",
+  "yalcSig": "914806d5bfa9660c54b1bdc9caae603f"
+}

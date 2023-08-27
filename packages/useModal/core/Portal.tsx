@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useState } from "react";
+import React, { memo, useContext, useMemo, useState } from "react";
 import { ModalContext, ModalInsContext } from "./context";
 import { Param2Props, registerStoreInstance } from "./types";
 
@@ -31,12 +31,12 @@ const Render = memo((props: RenderProps) => {
     setVisibleIds((beforeVids) => beforeVids.filter((id) => id !== modalId))
   }
 
-  const onResolve = (value: unknown) => {
-    resolve?.({ value, onClose });
+  const onResolve = (value?: unknown) => {
+    resolve?.(value);
     onClose();
   };
 
-  const onReject = (err: any) => {
+  const onReject = (err?: any) => {
     reject?.(err);
     onClose();
   };

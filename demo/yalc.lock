@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@waou/use-modal": {
+      "version": "2.1.1",
+      "signature": "914806d5bfa9660c54b1bdc9caae603f",
+      "file": true
+    }
+  }
+}

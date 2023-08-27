@@ -27,7 +27,7 @@ export const useRegisterModal: useRegisterModalHandler = (
         Component: functionComponent,
         props,
       }),
-    [deps]
+    deps
   );
 
   // unregister

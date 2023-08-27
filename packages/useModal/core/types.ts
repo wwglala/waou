@@ -1,8 +1,8 @@
-import { ComponentType, ReactNode, FunctionComponent } from "react";
+import { ComponentType, ReactNode, FunctionComponent } from 'react';
 
 export enum MODAL_TYPE {
-  MODAL = "modal",
-  SIDE_SHEET = "sideSheet",
+  MODAL = 'modal',
+  SIDE_SHEET = 'sideSheet',
 }
 
 export interface ModalProviderProps {
@@ -27,7 +27,7 @@ export interface useModalHandler {
   <T>(
     FunctionComponent: FunctionComponent<any> | string,
     props?: Param2Props<T>,
-    deps?: Readonly<unknown[]>
+    deps?: Readonly<unknown[]>,
   ): [Dispatch<T>];
 
   useRegister: (id: string, Fc: FunctionComponent<any>) => void;
@@ -38,7 +38,7 @@ export interface registerModalProps<T> {
   modalId: symbol | string;
   Component: FunctionComponent<any>;
   props: Param2Props<T>;
-  resolve?: (value: { value: unknown; onClose: () => void }) => void;
+  resolve?: (value: unknown) => void;
   reject?: (err: any) => void;
 }
 
@@ -51,7 +51,7 @@ export interface useRegisterModalHandler {
     type: MODAL_TYPE,
     FunctionComponent: FunctionComponent | string,
     props: Param2Props<T>,
-    deps: Readonly<unknown[]>
+    deps: Readonly<unknown[]>,
   ): Dispatch<T>;
 }
 
