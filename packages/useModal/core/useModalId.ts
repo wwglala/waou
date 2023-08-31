@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { FunctionComponent, useContext, useMemo } from 'react';
 import { ModalContext } from './context';
 import { Fn } from './types';
@@ -8,12 +7,12 @@ export const useModalId = <T extends string | Fn>(context: T) => {
 
   if (typeof context === 'string') {
     const component = modalStoreRef.current.find(
-      ins => ins.modalId === context,
+      ins => ins.modalId === context
     )?.Component;
 
     if (!component) {
       throw new Error(
-        `useModal: Please check this name [${context}], Are you registered?`,
+        `useModal: Please check this name [${context}], Are you registered?`
       );
     }
 
@@ -24,7 +23,7 @@ export const useModalId = <T extends string | Fn>(context: T) => {
   } else {
     return {
       modalId: useMemo(() => Symbol('useModal_id'), []),
-      component: context as FunctionComponent<any>,
+      component: context as FunctionComponent,
     };
   }
 };

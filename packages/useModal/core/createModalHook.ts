@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useContext, useEffect, useMemo } from 'react';
 import { ModalContext } from './context';
 import { InitModalType } from './types';
@@ -9,7 +8,7 @@ export const createModalHook: InitModalType = (type: MODAL_TYPE) => {
   const useModal: ReturnType<InitModalType> = (
     component,
     props?,
-    deps = ea,
+    deps = ea
   ) => {
     const { init } = useContext(ModalContext);
 
@@ -49,7 +48,7 @@ export const createModalHook: InitModalType = (type: MODAL_TYPE) => {
       () => () => {
         destroyById(modalId);
       },
-      [],
+      []
     );
   };
 

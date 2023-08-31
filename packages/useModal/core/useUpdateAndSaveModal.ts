@@ -8,10 +8,9 @@ export const useUpdateAndSaveModal = (
   type: MODAL_TYPE,
   component: Parameters<ReturnType<InitModalType>>[0],
   props?: Parameters<ReturnType<InitModalType>>[1],
-  deps: Parameters<ReturnType<InitModalType>>[2] = ea,
+  deps: Parameters<ReturnType<InitModalType>>[2] = ea
 ) => {
-  const { setVisibleIds, updateAndSaveModal, destroyById } =
-    useContext(ModalContext);
+  const { setVisibleIds, updateAndSaveModal, destroyById } = useContext(ModalContext);
 
   const { modalId, component: functionComponent } = useModalId(component);
 
@@ -31,14 +30,12 @@ export const useUpdateAndSaveModal = (
         reject: noop,
         props,
       }),
-    deps,
+    deps
   );
 
   // update
   useEffect(() => {
-    setVisibleIds(beforeVids =>
-      beforeVids.includes(modalId) ? [...beforeVids] : beforeVids,
-    );
+    setVisibleIds(beforeVids => (beforeVids.includes(modalId) ? [...beforeVids] : beforeVids));
   }, deps);
 
   // destroy
@@ -48,13 +45,10 @@ export const useUpdateAndSaveModal = (
         destroyById(modalId);
       }
     },
-    [modalId],
+    [modalId]
   );
 
-  const dispatch: ReturnType<ReturnType<InitModalType>>[0] = (
-    visible,
-    dispatchProps,
-  ) =>
+  const dispatch: ReturnType<ReturnType<InitModalType>>[0] = (visible, dispatchProps) =>
     new Promise((resolve, reject) => {
       updateAndSaveModal({
         ...currentModalProps,
@@ -76,11 +70,7 @@ export const useUpdateAndSaveModal = (
         return;
       }
       // show and update
-      setVisibleIds(beforeVids =>
-        beforeVids.includes(modalId)
-          ? [...beforeVids]
-          : [...beforeVids, modalId],
-      );
+      setVisibleIds(beforeVids => (beforeVids.includes(modalId) ? [...beforeVids] : [...beforeVids, modalId]));
     });
 
   return dispatch;

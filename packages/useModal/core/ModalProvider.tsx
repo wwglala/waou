@@ -22,9 +22,7 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
   const modalStoreRef = useRef<StaticModalStore<any>[]>([]);
 
   const destroyById = (modalId: string | symbol) => {
-    modalStoreRef.current = modalStoreRef.current.filter(
-      mins => mins.modalId !== modalId,
-    );
+    modalStoreRef.current = modalStoreRef.current.filter(mins => mins.modalId !== modalId);
   };
 
   const contextValue = useMemo(
@@ -38,7 +36,7 @@ export const ModalProvider = memo((props: ModalProviderProps) => {
       destroyById,
       updateAndSaveModal: updateAndSaveModal(modalStoreRef),
     }),
-    [modalConfig],
+    [modalConfig]
   );
 
   return (

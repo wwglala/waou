@@ -1,30 +1,26 @@
-import { ComponentType, FunctionComponent, ReactNode } from 'react';
+import { ComponentType, FunctionComponent, ReactNode, MutableRefObject, Dispatch, SetStateAction } from 'react';
 import { MODAL_TYPE } from './constants';
 
 export type Fn = (props: any) => void;
 
 export type HookParam2Props<M, C> = C extends undefined
   ? {
-      modalProps?: M;
-    }
+    modalProps?: M;
+  }
   : Partial<C> & {
-      modalProps?: M;
-    };
+    modalProps?: M;
+  };
 
 export interface UseModalProps<M> {
   <C extends Fn | string>(
     component: C,
-    props?: C extends Fn
-      ? HookParam2Props<M, Parameters<C>[0]>
-      : HookParam2Props<M, any>,
-    deps?: Readonly<unknown[]>,
+    props?: C extends Fn ? HookParam2Props<M, Parameters<C>[0]> : HookParam2Props<M, any>,
+    deps?: Readonly<unknown[]>
   ): [
     <R>(
       visible: boolean,
-      dispatchProps?: C extends Fn
-        ? HookParam2Props<M, Parameters<C>[0]>
-        : HookParam2Props<M, any>,
-    ) => Promise<R>,
+      dispatchProps?: C extends Fn ? HookParam2Props<M, Parameters<C>[0]> : HookParam2Props<M, any>
+    ) => Promise<R>
   ];
 
   useRegister: (id: string, Fc: FunctionComponent<any>) => void;
@@ -56,8 +52,8 @@ export interface StaticModalStore<M> {
 export interface ModalContextProps {
   init: boolean;
   config: Omit<ModalProviderProps, 'children'> | null;
-  modalStoreRef: React.MutableRefObject<StaticModalStore<any>[]>;
-  setVisibleIds: React.Dispatch<React.SetStateAction<(symbol | string)[]>>;
+  modalStoreRef: MutableRefObject<StaticModalStore<any>[]>;
+  setVisibleIds: Dispatch<SetStateAction<(symbol | string)[]>>;
   updateAndSaveModal: (modalInstance: StaticModalStore<any>) => void;
   destroyById: (modalId: string | symbol) => void;
   interceptor: ModalProviderProps['interceptor'];
