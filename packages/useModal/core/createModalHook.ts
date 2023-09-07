@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useContext, useEffect, useMemo } from 'react';
 import { ModalContext } from './context';
 import { InitModalType } from './types';
@@ -5,11 +6,7 @@ import { MODAL_TYPE, ea, eo, noop } from './constants';
 import { useUpdateAndSaveModal } from './useUpdateAndSaveModal';
 
 export const createModalHook: InitModalType = (type: MODAL_TYPE) => {
-  const useModal: ReturnType<InitModalType> = (
-    component,
-    props?,
-    deps = ea
-  ) => {
+  const useModal: ReturnType<InitModalType> = (component, props?, deps = ea) => {
     const { init } = useContext(ModalContext);
 
     if (!init) {

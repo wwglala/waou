@@ -5,11 +5,11 @@ export type Fn = (props: any) => void;
 
 export type HookParam2Props<M, C> = C extends undefined
   ? {
-    modalProps?: M;
-  }
+      modalProps?: M;
+    }
   : Partial<C> & {
-    modalProps?: M;
-  };
+      modalProps?: M;
+    };
 
 export interface UseModalProps<M> {
   <C extends Fn | string>(

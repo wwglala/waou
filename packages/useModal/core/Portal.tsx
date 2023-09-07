@@ -17,7 +17,7 @@ const RenderModal = (props: RenderProps & { children: ReactNode; modalProps: any
   const { setVisibleIds, loadingField } = useContext(ModalContext);
   const [injectModalProps, setModalProps] = useState(modalProps);
 
-  // 没有卸载，重置 modal props
+  // not unmount to reset modal props
   useNotUnmount(() => {
     if (!visibleIds.includes(modalId)) {
       setModalProps(modalProps);

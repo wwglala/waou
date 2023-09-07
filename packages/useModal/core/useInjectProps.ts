@@ -6,6 +6,6 @@ export const useInjectProps = <T>() => {
 
   return {
     ...otherProps,
-    setModalProps: setModalProps<T>
+    setModalProps: setModalProps<T>,
   };
 };

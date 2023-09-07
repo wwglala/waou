@@ -20,7 +20,7 @@ export const ModalInsContext = createContext<{
   onResolve: (value?: any) => void;
   onReject: (err?: any) => void;
 }>({
-      setModalProps: noop,
-      onResolve: noop,
-      onReject: noop,
-    });
+  setModalProps: noop,
+  onResolve: noop,
+  onReject: noop,
+});

@@ -1,11 +1,14 @@
 import { useEffect, useRef } from 'react';
 
 export const useNotUnmount = <T>(cb: () => void, deps: Readonly<Array<T>> = []) => {
-  const unmount = useRef(true);
+  const unmount = useRef(false);
 
-  useEffect(() => () => {
-    unmount.current = true;
-  }, []);
+  useEffect(
+    () => () => {
+      unmount.current = true;
+    },
+    []
+  );
 
   useEffect(
     () => () => {
